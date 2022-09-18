@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pokemonDB
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    command: ["postgres", "-c", "log_statement=all"]
+
+  # web:
+  #   build: .
+  #   depends_on:
+  #     - db
+  #   ports:
+  #       - "4000:4000"
+  #   volumes:
+  #     - .:/app
