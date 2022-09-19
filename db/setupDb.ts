@@ -5,7 +5,7 @@ import knexfile from "../knexfile";
 
 export const setupDb = () => {
   const db = knex(knexfile.development);
-  // Model.knex(db)
+  Model.knex(db)
   return db;
 };
 export type Db = Knex<any, unknown[]>;

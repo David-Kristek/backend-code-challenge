@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/lodash": "^4.14.185",
     "apollo-server": "^3.10.2",
     "apollo-server-express": "^3.10.2",
     "cors": "^2.8.5",
