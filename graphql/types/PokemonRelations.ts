@@ -15,3 +15,9 @@ export const PokemonEvolution = objectType({
     },
   });
   
+  export const PokemonType = objectType({
+    name: "Type", 
+    definition(t) {
+      t.nonNull.string("type")
+    }
+  })

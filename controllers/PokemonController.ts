@@ -1,3 +1,4 @@
+import { bind } from "lodash";
 import { Db } from "../db/setupDb";
 import { NexusGenInputs } from "../gen/nexus-typegen";
 import Pokemon from "../models/Pokemon";
@@ -5,10 +6,13 @@ import { Type } from "../models/Type";
 import { BaseController } from "./BaseController";
 
 export class PokemonController extends BaseController {
-  returnMaxMinValue = <T>(root: any, key: string) => ({
-    maximal: root[`max_${key}`] as T,
-    minimum: root[`min_${key}`] as T,
-  });
+  // returnMaxMinValue = <T>(root: any, key: string) => ({
+  //   maximal: root[`max_${key}`] as T,
+  //   minimum: root[`min_${key}`] as T,e
+  // });
+  getPokemons() {
+    return Pokemon.query().withGraphFetched("[types, evolutions]");
+  }
   async insertPokemons(args: { data: NexusGenInputs["PokemonInputType"][] }) {
     const pokemonData = [];
     const pokemonTypes = [];
@@ -17,19 +21,24 @@ export class PokemonController extends BaseController {
       const intId = parseInt(pokemon.id);
       for (const type of pokemon.types) {
         // gets type of pokemon
-        const type_id = this.findPokemonType(type);
-        pokemonTypes.push({ pokemon_id: pokemon.id, type_id });
+        const type_id = await findPokemonType(type);
+        pokemonTypes.push({ pokemon_id: intId, type_id });
       }
       for (const evolution of pokemon.evolutions ?? []) {
-        // find evolution id in passed data
+        // gets evolutions for pokemon
+        const evolution_id = await findPokemonEvolution(
+          args.data,
+          evolution.id
+        );
+        if (evolution_id)
+          pokemonEvolutions.push({ evolution_id, pokemon_id: intId });
       }
-      const { name, classification, fleeRate, evolutions, maxCP, maxHP } =
-        pokemon;
-      let newPokemon = {
+
+      const { name, classification, fleeRate, maxCP, maxHP } = pokemon;
+      const newPokemon = {
         name,
         classification,
         fleeRate,
-        evolutions,
         maxCP,
         maxHP,
         min_weight: pokemon.weight.minimum,
@@ -41,7 +50,7 @@ export class PokemonController extends BaseController {
       pokemonData.push(newPokemon);
     }
     try {
-      const res = await this.db.table("pokemon").insert(pokemonData);
+      await this.db.table("pokemon").insert(pokemonData);
       await this.db.table("pokemon_types").insert(pokemonTypes);
       await this.db.table("pokemon_evolutions").insert(pokemonEvolutions);
     } catch (error) {
@@ -49,48 +58,40 @@ export class PokemonController extends BaseController {
     }
     return true;
   }
-  private async findPokemonType(type: string) {
-    const existingType = await Type.query()
-      .select("id")
-      .where("type", type)
-      .first();
-    if (!existingType) {
-      // create new type
-      const res = await Type.query().insert({ type });
-      return res.id;
-    }
-    return existingType.id;
-  }
-  private async findPokemonEvolution(args: {
-    data: NexusGenInputs["PokemonInputType"][];
-  }) {
-    const evolPokemonId = args.data.find(
-      (pokemon: any) => parseInt(pokemon.id) === evolution.id
-    )?.id;
-
-    if (evolPokemonId) {
-      pokemonEvolutions.push({
-        evolution_id: evolPokemonId,
-        pokemon_id: intId,
-      });
-      continue;
-    }
-    // find evolution id from db
-    const evolutionPokemon = (await Pokemon.query()
-      .where("id", evolution.id)
-      .select("id")
-      .first()) as any;
-
-    if (evolutionPokemon?.id) {
-      pokemonEvolutions.push({
-        evolution_id: evolutionPokemon.id,
-        pokemon_id: intId,
-      });
-      continue;
-    }
-
-    console.warn(
-      `evolution cant be passed for pokemon ${pokemon.name} by ${evolution.name}`
-    );
-  }
 }
+
+const findPokemonType = async (type: string) => {
+  const existingType = await Type.query()
+    .select("id")
+    .where("type", type)
+    .first();
+  if (!existingType) {
+    // create new type
+    const res = await Type.query().insert({ type });
+    return res.id;
+  }
+  return existingType.id;
+};
+
+const findPokemonEvolution = async (
+  data: NexusGenInputs["PokemonInputType"][],
+  evolvePokemonId: number
+) => {
+  const evolutionPokemonId = data.find(
+    (pokemon: any) => parseInt(pokemon.id) === evolvePokemonId
+  )?.id;
+
+  if (evolutionPokemonId) return parseInt(evolutionPokemonId);
+
+  // find evolution id from db
+  const evolutionPokemonDb = (await Pokemon.query()
+    .where("id", evolvePokemonId)
+    .select("id")
+    .first()) as any;
+
+  if (evolutionPokemonDb?.id) return evolutionPokemonDb.id;
+
+  console.warn(
+    `evolution cant be passed for pokemon with id: ${evolvePokemonId}`
+  );
+};

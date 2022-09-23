@@ -6,7 +6,7 @@ export default class Pokemon extends Model {
     return "pokemon";
   }
   static relationMappings = {
-    type: {
+    types: {
       relation: Model.ManyToManyRelation,
       modelClass: Type,
       join: {
@@ -19,7 +19,7 @@ export default class Pokemon extends Model {
         to: "type.id",
       },
     },
-    pokemon: {
+    evolutions: {
         relation: Model.ManyToManyRelation,
         modelClass: Pokemon,
         join: {

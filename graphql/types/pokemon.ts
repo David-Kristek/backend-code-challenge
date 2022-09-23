@@ -1,15 +1,4 @@
-import {
-  objectType,
-  extendType,
-  nonNull,
-  stringArg,
-  intArg,
-  inputObjectType,
-  list,
-} from "nexus";
-import { Db } from "../../db/setupDb";
-import { Type } from "../../models/Type";
-import PokemonModel from "../../models/Pokemon";
+import { objectType, extendType, nonNull, inputObjectType, list } from "nexus";
 
 export const Pokemon = objectType({
   name: "Pokemon",
@@ -22,8 +11,8 @@ export const Pokemon = objectType({
     t.float("fleeRate");
     t.int("maxCP");
     t.int("maxHP");
-    t.field("types", { type: list("String") });
-    t.field("evolutions", { type: list("String") });
+    t.list.field("types", { type: "Type" });
+    t.list.field("evolutions", { type: "Pokemon" });
   },
 });
 
@@ -32,9 +21,9 @@ export const pokemonQuery = extendType({
   definition(t) {
     t.nonNull.list.field("pokemons", {
       type: "Pokemon",
-      resolve: async (_, __, { db }: { db: Db }) => {
-        const data = await db.table("pokemon").select("*");
-        return data;
+      resolve: async (_, __, { db, pokemon }) => {
+        const pokemons = await pokemon.getPokemons();
+        return pokemons as any;
       },
     });
   },
@@ -64,8 +53,8 @@ export const pokemonMutation = extendType({
     t.nonNull.field("addPokemon", {
       type: "Boolean",
       args: { data: nonNull(list(nonNull(PokemonInputType))) },
-      resolve: async (_, args, { db, pokemon: { insertPokemons } }) => {
-        return insertPokemons(args);
+      resolve: async (_, args, { pokemon }) => {
+        return pokemon.insertPokemons(args);
       },
     });
   },

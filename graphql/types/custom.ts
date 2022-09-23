@@ -10,6 +10,7 @@ export const deleteMutaion = extendType({
           try {
             const typeId = await db.table("pokemon_evolutions").del();
             await db.table("pokemon_types").del();
+            await db.table("type").del();
             await db.table("pokemon").del();
             const res = await Type.query().insert({ type: "Grass" });
             console.log(res.id);

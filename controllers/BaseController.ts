@@ -4,5 +4,6 @@ export class BaseController {
   protected db: Db;
   constructor(db: Db) {
     this.db = db; 
+    
   }
 }
