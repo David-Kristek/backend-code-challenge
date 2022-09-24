@@ -11,27 +11,22 @@ interface getPokemonsProps {
   limit?: number | null;
   offset?: number | null;
   search?: string | null;
+  types?: string[] | null;
 }
 
 export class PokemonController extends BaseController {
-  getPokemons({ offset, limit, search }: getPokemonsProps) {
+  getPokemons({ offset, limit, search, types }: getPokemonsProps) {
     const searchFormatted = defaultNameLetterHeight(search);
-    // if (search)
+    // select * from pokemon inner join pokemon_types on pokemon_types.pokemon_id = pokemon.id inner join type on type.id = pokemon_types.type_id where type.type = 'Grass';
     return Pokemon.query()
       .limit(limit ?? MAX_QUERY_LIMIT)
       .offset(offset ?? 0)
       .whereRaw(`name LIKE '%${searchFormatted}%'`)
       .withGraphFetched("[types, evolutions]")
-      // .withGraphJoined("[types, evolutions]")
-      // .modifyGraph('types', builder => {
-      //   builder.where("type", "Fire")
-      // })
-      // .modifiers({
-      //   filterType(builder) {
-      //     builder.where("type", "Fire")
-      //   },
-      // });
-      // .where("types.type", "Fire")
+      .joinRelated("types")
+      .where((builder) =>
+        types && types.length > 0 ? builder.whereIn("types.type", types) : null
+      );
   }
   async insertPokemons(args: { data: NexusGenInputs["PokemonInputType"][] }) {
     const pokemonData = [];

@@ -14,7 +14,7 @@ We have provided you with Pokemon data in a json file. Your mission is to create
   - Query pokemons with the options:
     - [x] Pagination
     - [x] Search by name
-    - [ ] Filter by pokemon type
+    - [x] Filter by pokemon type
     - [ ] Filter by favorite
   - Query a pokemon by id
   - [x] Query a pokemon by name

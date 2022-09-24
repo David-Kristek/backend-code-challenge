@@ -22,6 +22,7 @@ export const PokemonQueryInput = inputObjectType({
     t.int("offset");
     t.int("limit");
     t.string("search");
+    t.list.field("types", { type: nonNull("String") });
   },
 });
 
