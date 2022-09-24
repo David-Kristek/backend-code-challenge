@@ -1,4 +1,12 @@
-import { objectType, extendType, nonNull, inputObjectType, list } from "nexus";
+import {
+  objectType,
+  extendType,
+  nonNull,
+  inputObjectType,
+  list,
+  stringArg,
+  intArg,
+} from "nexus";
 
 export const Pokemon = objectType({
   name: "Pokemon",
@@ -39,6 +47,20 @@ export const pokemonQuery = extendType({
     });
   },
 });
+
+export const pokemonQueryById = extendType({
+  type: "Query",
+  definition(t) {
+    t.field("pokemonById", {
+      type: "Pokemon",
+      args: { id: nonNull(intArg()) },
+      resolve: async (_, { id }, { db, pokemon }) => {
+        return (await pokemon.getPokemonById(id)) as any;
+      },
+    });
+  },
+});
+
 export const PokemonInputType = inputObjectType({
   name: "PokemonInputType",
   definition(t) {

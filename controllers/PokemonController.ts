@@ -73,6 +73,9 @@ export class PokemonController extends BaseController {
     }
     return true;
   }
+  getPokemonById(id: number) {
+    return Pokemon.query().findById(id).withGraphFetched("[types, evolutions]");
+  }
 }
 
 const findPokemonType = async (type: string) => {
