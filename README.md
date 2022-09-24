@@ -18,7 +18,7 @@ We have provided you with Pokemon data in a json file. Your mission is to create
     - [ ] Filter by favorite
   - Query a pokemon by id
   - [x] Query a pokemon by name
-  - [ ] Query list of pokemon types
+  - [x] Query list of pokemon types
   - [ ] Mutation to mark/unmark pokemon as favorite
 - [ ] Test are important and if time allows it, we'd like to see some test coverage
 

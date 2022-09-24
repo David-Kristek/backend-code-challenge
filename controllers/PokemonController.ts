@@ -20,8 +20,18 @@ export class PokemonController extends BaseController {
     return Pokemon.query()
       .limit(limit ?? MAX_QUERY_LIMIT)
       .offset(offset ?? 0)
-      .whereRaw(`name LIKE '%${searchFormatted}%'`) 
-      .withGraphFetched("[types, evolutions]");
+      .whereRaw(`name LIKE '%${searchFormatted}%'`)
+      .withGraphFetched("[types, evolutions]")
+      // .withGraphJoined("[types, evolutions]")
+      // .modifyGraph('types', builder => {
+      //   builder.where("type", "Fire")
+      // })
+      // .modifiers({
+      //   filterType(builder) {
+      //     builder.where("type", "Fire")
+      //   },
+      // });
+      // .where("types.type", "Fire")
   }
   async insertPokemons(args: { data: NexusGenInputs["PokemonInputType"][] }) {
     const pokemonData = [];

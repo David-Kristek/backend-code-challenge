@@ -4,6 +4,7 @@ import * as controllers from "../controllers";
 export interface Context {
   db: Db;
   pokemon: controllers.PokemonController;
+  type: controllers.TypeController;
 }
 
 export const context =
@@ -13,5 +14,6 @@ export const context =
     //   if (db.client.connectionSettings) {
     //   }
     const pokemon = new controllers.PokemonController(db);
-    return { db, pokemon };
+    const type = new controllers.TypeController(db);
+    return { db, pokemon, type };
   };
