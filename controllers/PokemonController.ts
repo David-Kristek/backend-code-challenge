@@ -5,13 +5,23 @@ import Pokemon from "../models/Pokemon";
 import { Type } from "../models/Type";
 import { BaseController } from "./BaseController";
 
+const MAX_QUERY_LIMIT = 100;
+
+interface getPokemonsProps {
+  limit?: number | null;
+  offset?: number | null;
+  search?: string | null;
+}
+
 export class PokemonController extends BaseController {
-  // returnMaxMinValue = <T>(root: any, key: string) => ({
-  //   maximal: root[`max_${key}`] as T,
-  //   minimum: root[`min_${key}`] as T,e
-  // });
-  getPokemons() {
-    return Pokemon.query().withGraphFetched("[types, evolutions]");
+  getPokemons({ offset, limit, search }: getPokemonsProps) {
+    const searchFormatted = defaultNameLetterHeight(search);
+    // if (search)
+    return Pokemon.query()
+      .limit(limit ?? MAX_QUERY_LIMIT)
+      .offset(offset ?? 0)
+      .whereRaw(`name LIKE '%${searchFormatted}%'`) 
+      .withGraphFetched("[types, evolutions]");
   }
   async insertPokemons(args: { data: NexusGenInputs["PokemonInputType"][] }) {
     const pokemonData = [];
@@ -25,7 +35,7 @@ export class PokemonController extends BaseController {
         pokemonTypes.push({ pokemon_id: intId, type_id });
       }
       for (const evolution of pokemon.evolutions ?? []) {
-        // gets evolutions for pokemon
+        // gets evolutions for pokemon;
         const evolution_id = await findPokemonEvolution(
           args.data,
           evolution.id
@@ -94,4 +104,7 @@ const findPokemonEvolution = async (
   console.warn(
     `evolution cant be passed for pokemon with id: ${evolvePokemonId}`
   );
+};
+const defaultNameLetterHeight = (word?: string | null) => {
+  return word ? `${word[0].toUpperCase()}${word.toLowerCase().slice(1)}` : "";
 };

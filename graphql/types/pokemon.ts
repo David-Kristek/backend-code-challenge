@@ -16,13 +16,23 @@ export const Pokemon = objectType({
   },
 });
 
+export const PokemonQueryInput = inputObjectType({
+  name: "PokemonQueryInput",
+  definition(t) {
+    t.int("offset");
+    t.int("limit");
+    t.string("search");
+  },
+});
+
 export const pokemonQuery = extendType({
   type: "Query",
   definition(t) {
     t.nonNull.list.field("pokemons", {
       type: "Pokemon",
-      resolve: async (_, __, { db, pokemon }) => {
-        const pokemons = await pokemon.getPokemons();
+      args: { query: PokemonQueryInput },
+      resolve: async (_, { query }, { db, pokemon }) => {
+        const pokemons = await pokemon.getPokemons(query ?? {});
         return pokemons as any;
       },
     });

@@ -6,6 +6,7 @@ export default class Pokemon extends Model {
   min_weight?: string;
   max_height?: string;
   min_height?: string;
+  name?: string;
   static getTableName() {
     return "pokemon";
   }
