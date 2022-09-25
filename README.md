@@ -4,6 +4,22 @@ This repository contains a coding exercise for new developers joining the backen
 
 Fork this repository and create your own exercise!
 
+### How to run 
+Run docker and then type in your terminal 
+```
+docker compse up
+```
+Now you can seed all pokemons to database with command 
+```
+npm run seed
+```
+Now go to http://localhost:400/ and click on query your server. You can write all queries there. 
+You can also delete everything from database with 
+```
+npm run delete
+```
+
+
 ## What we want you to build
 
 We have provided you with Pokemon data in a json file. Your mission is to create a database and expose the database to an API. Basically, you need to:

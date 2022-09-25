@@ -27,4 +27,3 @@ if(db.client.connectionSettings) {
 
 
 // psql postgres://postgres:postgres@localhost:15432/pokemonDB
-// --legacy-watch

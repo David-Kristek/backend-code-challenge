@@ -4,6 +4,7 @@
     "apollo-server": "^3.10.2",
     "cors": "^2.8.5",
     "graphql": "^16.6.0",
+    "graphql-request": "^5.0.0",
     "knex": "^2.3.0",
     "nexus": "^1.3.0",
     "objection": "^3.0.1",
@@ -21,6 +22,8 @@
   "scripts": {
     "start": "nodemon server.ts ",
     "migrate": "npx knex migrate:latest --knexfile knexfile.ts",
-    "build": "tsc"
+    "build": "tsc", 
+    "seed": "npx ts-node ./db/scripts/seed.ts", 
+    "delete": "npx ts-node ./db/scripts/delete.ts"
   }
 }
