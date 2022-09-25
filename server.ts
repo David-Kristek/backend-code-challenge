@@ -17,13 +17,12 @@ export const schema = makeSchema({
   },
 });
 
-const db = setupDb(); 
-if(db.client.connectionSettings) {  
+const db = setupDb();
+if (db.client.connectionSettings) {
   const server = new ApolloServer({ schema, context: context(db) });
   server.listen().then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
   });
 }
-
 
 // psql postgres://postgres:postgres@localhost:15432/pokemonDB

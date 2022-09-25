@@ -5,9 +5,21 @@ This repository contains a coding exercise for new developers joining the backen
 Fork this repository and create your own exercise!
 
 ### How to run 
+Install modules
+```
+npm install
+```
 Run docker and then type in your terminal 
 ```
-docker compse up
+docker compose up --build
+```
+Open another terminal and type this command to start server
+```
+npm run 
+```
+Open another terminal once agin and type this command to start server
+```
+npm start
 ```
 Run to create tables
 ```

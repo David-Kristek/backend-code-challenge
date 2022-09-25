@@ -67,8 +67,12 @@ export class PokemonController extends BaseController {
     }
     return true;
   }
-  getPokemonById(id: number) {
-    return Pokemon.query().findById(id).withGraphFetched("[types, evolutions]");
+  async getPokemonById(id: number) {
+    const pokemon = (await Pokemon.query()
+      .findById(id)
+      .withGraphFetched("[types, evolutions, favorite]")) as any;
+    pokemon.favorite = !!pokemon.favorite;
+    return pokemon;
   }
 }
 
