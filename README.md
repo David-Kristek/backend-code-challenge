@@ -13,7 +13,7 @@ Run docker and then type in your terminal
 ```
 docker compose up --build
 ```
-Open another terminal once agin and type this command to start server
+Open another terminal once again and type this command to start server
 ```
 npm start
 ```
@@ -25,7 +25,7 @@ Now you can seed all pokemons to database with command
 ```
 npm run seed
 ```
-Now go to http://localhost:400/ and click on query your server. You can write all queries there. 
+Now go to http://localhost:4000/ and click on query your server. You can write all queries there. 
 You can also delete everything from database with 
 ```
 npm run delete
