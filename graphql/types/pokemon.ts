@@ -21,6 +21,7 @@ export const Pokemon = objectType({
     t.int("maxHP");
     t.list.field("types", { type: "Type" });
     t.list.field("evolutions", { type: "Pokemon" });
+    t.boolean("favorite");
   },
 });
 
@@ -40,9 +41,12 @@ export const pokemonQuery = extendType({
     t.nonNull.list.field("pokemons", {
       type: "Pokemon",
       args: { query: PokemonQueryInput },
-      resolve: async (_, { query }, { db, pokemon }) => {
-        const pokemons = await pokemon.getPokemons(query ?? {});
-        return pokemons as any;
+      resolve: async (_, { query }, { pokemon }) => {
+        const pokemons = (await pokemon.getPokemons(query ?? {})) as any;
+        return pokemons.map((pokemon: any) => ({
+          ...pokemon,
+          favorite: !!pokemon.favorite,
+        }));
       },
     });
   },
@@ -54,7 +58,7 @@ export const pokemonQueryById = extendType({
     t.field("pokemonById", {
       type: "Pokemon",
       args: { id: nonNull(intArg()) },
-      resolve: async (_, { id }, { db, pokemon }) => {
+      resolve: async (_, { id }, { pokemon }) => {
         return (await pokemon.getPokemonById(id)) as any;
       },
     });

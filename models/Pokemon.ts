@@ -1,4 +1,5 @@
 import { Model } from "objection";
+import path from "path";
 import { Type } from "./Type";
 
 export default class Pokemon extends Model {
@@ -26,32 +27,42 @@ export default class Pokemon extends Model {
     };
   }
 
-  static relationMappings = {
-    types: {
-      relation: Model.ManyToManyRelation,
-      modelClass: Type,
-      join: {
-        from: "pokemon.id",
-        through: {
-          // pokemon_types is the join table.
-          from: "pokemon_types.pokemon_id",
-          to: "pokemon_types.type_id",
+  static relationMappings() {
+    return {
+      types: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Type,
+        join: {
+          from: "pokemon.id",
+          through: {
+            // pokemon_types is the join table.
+            from: "pokemon_types.pokemon_id",
+            to: "pokemon_types.type_id",
+          },
+          to: "type.id",
         },
-        to: "type.id",
       },
-    },
-    evolutions: {
-      relation: Model.ManyToManyRelation,
-      modelClass: Pokemon,
-      join: {
-        from: "pokemon.id",
-        through: {
-          // pokemon_evolutions is the join table.
-          from: "pokemon_evolutions.pokemon_id",
-          to: "pokemon_evolutions.evolution_id",
+      evolutions: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Pokemon,
+        join: {
+          from: "pokemon.id",
+          through: {
+            // pokemon_evolutions is the join table.
+            from: "pokemon_evolutions.pokemon_id",
+            to: "pokemon_evolutions.evolution_id",
+          },
+          to: "pokemon.id",
         },
-        to: "pokemon.id",
       },
-    },
-  };
+      favorite: {
+        relation: Model.HasOneRelation,
+        modelClass: path.join(__dirname, 'FavoritePokemon'),
+        join: {
+          from: "pokemon.id",
+          to: "favorite_pokemons.pokemon_id",
+        },
+      },
+    };
+  }
 }

@@ -9,6 +9,10 @@ Run docker and then type in your terminal
 ```
 docker compse up
 ```
+Run to create tables
+```
+npm run migrate
+```
 Now you can seed all pokemons to database with command 
 ```
 npm run seed
@@ -31,11 +35,11 @@ We have provided you with Pokemon data in a json file. Your mission is to create
     - [x] Pagination
     - [x] Search by name
     - [x] Filter by pokemon type
-    - [ ] Filter by favorite
+    - [x] Filter by favorite
   - [x] Query a pokemon by id
   - [x] Query a pokemon by name
   - [x] Query list of pokemon types
-  - [ ] Mutation to mark/unmark pokemon as favorite
+  - [x] Mutation to mark/unmark pokemon as favorite
 - [ ] Test are important and if time allows it, we'd like to see some test coverage
 
 ## Technology

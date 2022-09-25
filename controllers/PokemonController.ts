@@ -3,26 +3,20 @@ import { Db } from "../db/setupDb";
 import { NexusGenInputs } from "../gen/nexus-typegen";
 import Pokemon from "../models/Pokemon";
 import { Type } from "../models/Type";
-import { BaseController } from "./BaseController";
-
-const MAX_QUERY_LIMIT = 100;
-
-interface getPokemonsProps {
-  limit?: number | null;
-  offset?: number | null;
-  search?: string | null;
-  types?: string[] | null;
-}
+import {
+  BaseController,
+  getPokemonsProps,
+  MAX_QUERY_LIMIT,
+} from "./BaseController";
 
 export class PokemonController extends BaseController {
   getPokemons({ offset, limit, search, types }: getPokemonsProps) {
-    const searchFormatted = defaultNameLetterHeight(search);
     // select * from pokemon inner join pokemon_types on pokemon_types.pokemon_id = pokemon.id inner join type on type.id = pokemon_types.type_id where type.type = 'Grass';
     return Pokemon.query()
       .limit(limit ?? MAX_QUERY_LIMIT)
       .offset(offset ?? 0)
-      .whereRaw(`name LIKE '%${searchFormatted}%'`)
-      .withGraphFetched("[types, evolutions]")
+      .whereRaw(`name LIKE '%${this.defaultNameLetterHeight(search)}%'`)
+      .withGraphFetched("[types, evolutions, favorite]")
       .joinRelated("types")
       .where((builder) =>
         types && types.length > 0 ? builder.whereIn("types.type", types) : null
@@ -112,7 +106,4 @@ const findPokemonEvolution = async (
   console.warn(
     `evolution cant be passed for pokemon with id: ${evolvePokemonId}`
   );
-};
-const defaultNameLetterHeight = (word?: string | null) => {
-  return word ? `${word[0].toUpperCase()}${word.toLowerCase().slice(1)}` : "";
 };

@@ -5,6 +5,7 @@ export interface Context {
   db: Db;
   pokemon: controllers.PokemonController;
   type: controllers.TypeController;
+  favoritePokemon: controllers.FavoritePokemonController;
 }
 
 export const context =
@@ -15,5 +16,6 @@ export const context =
     //   }
     const pokemon = new controllers.PokemonController(db);
     const type = new controllers.TypeController(db);
-    return { db, pokemon, type };
+    const favoritePokemon = new controllers.FavoritePokemonController(db);
+    return { db, pokemon, type, favoritePokemon };
   };
